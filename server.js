@@ -22,6 +22,9 @@ app.use(registerRoute);
 const authRoute = require('./routes/auth');
 app.use(authRoute);
 
+const productRoute = require('./routes/products');
+app.use(productRoute);
+
 app.listen(port, () => {
   console.log(`Server is running on PORT:${port}`);
 });
