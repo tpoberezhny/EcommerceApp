@@ -30,6 +30,9 @@ app.use(productRoute);
 const userRoute = require("./routes/users");
 app.use(userRoute);
 
+const cartRoute = require("./routes/cart");
+app.use(cartRoute);
+
 app.listen(port, () => {
   console.log(`Server is running on PORT:${port}`);
 });
