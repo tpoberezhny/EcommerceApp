@@ -97,4 +97,58 @@ router.delete("/shopping_cart/:user_id/:product_id", async (req, res) => {
   }
 });
 
+//CHECKOUT
+
+//POST /shopping_cart/checkout - Checkout the cart
+router.post("/shopping_cart/checkout", async (req, res) => {
+  const { user_id, payment_method } = req.body;
+
+  try {
+    //Validation that the cart exists and is not empty
+    const cartItems = await db.query(
+      `SELECT products.id, products.price, shopping_cart.quantity
+       FROM shopping_cart
+       JOIN products ON shopping_cart.product_id = products.id
+       WHERE shopping_cart.user_id = $1`,
+      [user_id]
+  );
+    if (cartItems.rows.length === 0) {
+      return res.status(404).send("Cart is empty or does not exist");
+    }
+   //Calculating total price
+   const totalPrice = cartItems.rows.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  //SKIPING FOR NOW REAL PAYMENT PROCCEDURE
+
+  //Create a new order
+  const orderResult = await db.query(
+    "INSERT INTO orders (user_id, total_price, status, created_at, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *",
+    [user_id, totalPrice, "pending"]
+  );
+  const orderId = orderResult.rows[0].id;
+
+  //Inserting all cart items into the 'order_items' table
+  for (let item of cartItems.rows) {
+    const { id: productId, price, quantity } = item;
+    await db.query(
+      "INSERT INTO order_items (order_id, product_id, quantity, price, created_at, updated_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+      [orderId, productId, quantity, price]
+    );
+  }
+  //Clearing users cart after checkout
+  await db.query("DELETE FROM shopping_cart WHERE user_id = $1", [user_id]);
+
+  res.status(201).json({
+    message: "Order created successfully",
+    orderId: orderId,
+  });
+} catch (err) {
+  console.error(err);
+  res.status(500).send("Sercer Error");
+}
+});
+
 module.exports = router;
