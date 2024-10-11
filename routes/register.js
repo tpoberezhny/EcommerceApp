@@ -51,8 +51,9 @@ router.post(
             .json({ message: "Login failed after registration" });
         }
         res.status(201).json({
+          success: true,
           message: "User registered successfully and logged in",
-          user,
+          user: result.rows[0],
         });
       });
     } catch (err) {

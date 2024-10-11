@@ -44,18 +44,10 @@ passport.deserializeUser(async (id, done) => {
 router.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/dashboard",
+    successRedirect: "/",
     failureRedirect: "/login",
     failureFlash: false,
   })
 );
-
-router.get("/dashboard", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.send(`Welcome ${req.user.username}! This is your dashboard.`);
-  } else {
-    res.redirect("/login");
-  }
-});
 
 module.exports = router;
