@@ -1,0 +1,28 @@
+.first-section {
+  padding: 2rem;
+  text-align: center;
+}
+
+.description-text {
+  margin-bottom: 2rem;
+}
+
+.shopBtn {
+  color: #ffffff;
+  background-color: black;
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  transition: transform 0.3s ease, color 0.3s ease, background-color 0.7s ease;
+  display: block;
+  width: 100px;
+  margin: auto;
+  letter-spacing: 1.5px;
+}
+
+.shopBtn:hover {
+  color: black;
+  background-color: white;
+  border: 2px solid;
+}
