@@ -1,11 +1,13 @@
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
+const cors = require("cors")
 require("dotenv").config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
+app.use(cors());
 app.use(express.json());
 app.use(
   session({
@@ -27,7 +29,7 @@ app.use(authRoute);
 const productRoute = require("./routes/products");
 app.use(productRoute);
 
-const userRoute = require("./routes/users");
+const userRoute = require("./routes/user");
 app.use(userRoute);
 
 const cartRoute = require("./routes/cart");
