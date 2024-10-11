@@ -1,0 +1,40 @@
+.register {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 5rem;
+}
+
+.register input {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 14px;
+  margin: 15px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.register button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.register .error {
+  color: red;
+  font-weight: bold;
+}
+
+p {
+  margin-top: 30px;
+}
