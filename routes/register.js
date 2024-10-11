@@ -1,11 +1,13 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const db = require('../db/index');
-const { body, validationResult } = require('express-validator');
+const express = require("express");
+const bcrypt = require("bcrypt");
+const db = require("../db/index");
+const { body, validationResult } = require("express-validator");
+const passport = require("passport");
 
 const router = express.Router();
 
-router.post("/register",
+router.post(
+  "/register",
   [
     body("username").notEmpty().withMessage("Username is required"),
     body("email").isEmail().withMessage("Valid email is required"),
@@ -39,9 +41,19 @@ router.post("/register",
         [username, email, hashedPassword]
       );
 
-      res.status(201).json({
-        message: "User registered successfully",
-        user: result.rows[0],
+      const user = result.rows[0];
+
+      req.login(user, (err) => {
+        if (err) {
+          console.error(err);
+          return res
+            .status(500)
+            .json({ message: "Login failed after registration" });
+        }
+        res.status(201).json({
+          message: "User registered successfully and logged in",
+          user,
+        });
       });
     } catch (err) {
       console.error(err);
