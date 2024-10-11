@@ -1,0 +1,79 @@
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 80px;
+  color: #fff;
+  border-bottom: 1px solid rgba(27, 33, 14, 0.133);
+  font-family: "Roboto", sans-serif;
+  font-size: large;
+  font-weight: 500;
+}
+
+.navBar-logo img {
+  height: 60px;
+  width: auto;
+}
+
+.navBar-links {
+  display: flex;
+  gap: 40px;
+}
+
+.navBar-links a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navBar-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 5px;
+  transition: transform 0.3s ease;
+}
+
+.navBar-links a:hover .navBar-icon {
+  transform: scale(1.2);
+}
+
+.navBar-links a:hover {
+  color: #ddd;
+}
+
+.navBar-auth {
+  display: flex;
+  gap: 10px;
+}
+
+.navBar-btn {
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 0;
+  border-radius: 20px;
+  text-align: center;
+  width: 90px;
+  transition: transform 0.4s ease;
+}
+
+.navBar-btn-login {
+  background-color: #ffd900;
+}
+
+.navBar-btn-login:hover {
+  background-color: #bfa302;
+  transform: scale(1.1);
+}
+
+.navBar-btn-signup {
+  background-color: #000000;
+}
+
+.navBar-btn-signup:hover {
+  background-color: #474242;
+  transform: scale(1.1);
+}
