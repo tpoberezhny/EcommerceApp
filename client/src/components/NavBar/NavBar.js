@@ -13,6 +13,7 @@ const Navbar = ({
   username,
   setIsAuthenticated,
   setUsername,
+  cart
 }) => {
   const navigate = useNavigate();
 
@@ -40,7 +41,7 @@ const Navbar = ({
         </Link>
         <Link to="/cart">
           <img src={cartIcon} alt="Cart" className="navBar-icon" />
-          Cart
+          Cart ({cart.length})
         </Link>
       </div>
       <div className="navBar-auth">

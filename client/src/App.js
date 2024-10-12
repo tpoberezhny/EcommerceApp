@@ -12,9 +12,11 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import axios from "./api/axios";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [cart, setCart] = useState([]);
   const [username, setUsername] = useState("");
 
   useEffect(() => {
@@ -26,11 +28,21 @@ const App = () => {
     }
   }, []);
 
+  const addToCart = async (productId) => {
+    try {
+      const response = await axios.post('/cart', {productId});
+      setCart([...cart, response.data]);
+    } catch (error) {
+      console.error("Error adding product to the cart", error);
+    }
+  };
+
   return (
     <Router>
       <Navbar
         isAuthenticated={isAuthenticated}
         username={username}
+        cart={cart}
         setIsAuthenticated={setIsAuthenticated}
         setUsername={setUsername}
       />
@@ -56,7 +68,7 @@ const App = () => {
             />
           }
         />
-        <Route path="/products/:productId" element={<ProductDetail />} />
+        <Route path="/products/:productId" element={<ProductDetail addToCart={addToCart}/>} />
         <Route exact path="/checkout" element={<Checkout />} />
       </Routes>
     </Router>
