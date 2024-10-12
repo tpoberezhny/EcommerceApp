@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from '../api/axios';
+import axios from "../api/axios";
 import "../styles/Register.scss";
 
 const Register = ({ setIsAuthenticated, setUsername }) => {
@@ -66,7 +66,13 @@ const Register = ({ setIsAuthenticated, setUsername }) => {
         <button type="submit">Sign Up</button>
       </form>
       <p>
-        Already have an account? <a href="/login" style={{"textDecoration": "underline", "fontSize": "15px"}}>Log In</a>
+        Already have an account?{" "}
+        <a
+          href="/login"
+          style={{ textDecoration: "underline", fontSize: "15px" }}
+        >
+          Log In
+        </a>
       </p>
     </div>
   );

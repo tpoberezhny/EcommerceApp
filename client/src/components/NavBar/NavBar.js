@@ -8,7 +8,12 @@ import homeIcon from "../../images/homeIcon.svg";
 import productIcon from "../../images/productIcon.svg";
 import cartIcon from "../../images/cartIcon.svg";
 
-const Navbar = ({ isAuthenticated, username, setIsAuthenticated, setUsername}) => {
+const Navbar = ({
+  isAuthenticated,
+  username,
+  setIsAuthenticated,
+  setUsername,
+}) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {

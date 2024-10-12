@@ -10,7 +10,10 @@ const router = express.Router();
 router.post(
   "/register",
   [
-    body("username").notEmpty().withMessage("Username is required"),
+    body("username")
+      .notEmpty()
+      .isLength({ max: 10 })
+      .withMessage("Username is required, max length: 10 symbols"),
     body("email").isEmail().withMessage("Valid email is required"),
     body("password")
       .isLength({ min: 6 })
