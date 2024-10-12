@@ -1,14 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./NavBar.scss";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import logo from "../../images/logo.png";
 import homeIcon from "../../images/homeIcon.svg";
 import productIcon from "../../images/productIcon.svg";
 import cartIcon from "../../images/cartIcon.svg";
 
-const Navbar = () => {
+const Navbar = ({ isAuthenticated, username, setIsAuthenticated, setUsername}) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("username");
+    setIsAuthenticated(false);
+    setUsername("");
+    navigate("/");
+  };
+
   return (
     <nav className="navBar">
       <div className="navBar-logo">
@@ -29,12 +39,26 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="navBar-auth">
-        <Link to="/register" className="navBar-btn navBar-btn-signup">
-          Join
-        </Link>
-        <Link to="/login" className="navBar-btn navBar-btn-login">
-          Log In
-        </Link>
+        {isAuthenticated ? (
+          <div className="navBar-authenticated">
+            <span className="navBar-username">Hello, {username}</span>
+            <button
+              onClick={handleLogout}
+              className="navBar-btn navBar-btn-logout"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <>
+            <Link to="/register" className="navBar-btn navBar-btn-signup">
+              Join
+            </Link>
+            <Link to="/login" className="navBar-btn navBar-btn-login">
+              Log In
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );

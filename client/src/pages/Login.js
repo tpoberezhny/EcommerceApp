@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from '../api/axios';
+import axios from "../api/axios";
 import "../styles/Login.scss";
 
-const Login = () => {
-  const [username, setUsername] = useState("");
+const Login = ({ setIsAuthenticated, setUsername }) => {
+  const [username, setLocalUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -16,9 +16,12 @@ const Login = () => {
 
       if (response.data.token) {
         localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("username", response.data.user.username);
+        setIsAuthenticated(true);
+        setUsername(response.data.user.username);
         navigate("/");
       } else {
-        setError('Login failed. No token received.')
+        setError("Login failed. No token received.");
       }
     } catch (err) {
       setError("Invalid username or password");
@@ -34,7 +37,7 @@ const Login = () => {
           type="text"
           placeholder="Username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => setLocalUsername(e.target.value)}
           required
         />
         <input
@@ -46,8 +49,17 @@ const Login = () => {
         />
         <button type="submit">Log In</button>
       </form>
-      <p>Don't have an account? <a href="/register">Register</a></p>
-      <button className="google-login">Log in with Google</button>
+      <p>
+        Don't have an account? <a href="/register">Register</a>
+      </p>
+      <button
+        className="google-login"
+        onClick={() =>
+          (window.location.href = `${process.env.BASE_URL}/auth/google`)
+        }
+      >
+        Log in with Google
+      </button>
     </div>
   );
 };

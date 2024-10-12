@@ -76,3 +76,29 @@
   background-color: #474242;
   transform: scale(1.1);
 }
+
+.navBar-authenticated {
+  display: flex;
+  align-items: center;
+}
+
+.navBar-username {
+  margin-right: 15px;
+  font-weight: 500;
+  font-size: 18px;
+  text-align: center;
+}
+
+.navBar-btn-logout {
+  padding: 8px 15px;
+  font-size: 16px;
+  border-radius: 20px;
+  background-color: #ff5555;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.navBar-btn-logout:hover {
+  background-color: #e04444;
+}
