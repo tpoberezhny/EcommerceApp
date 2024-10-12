@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from '../api/axios';
 import "../styles/Register.scss";
 
-const Register = () => {
-  const [username, setUsername] = useState("");
+const Register = ({ setIsAuthenticated, setUsername }) => {
+  const [username, setLocalUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,14 +18,22 @@ const Register = () => {
         email,
         password,
       });
-      if (response.data.success) {
-        setUsername("");
+      if (response.data.token) {
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("username", response.data.user.username);
+        setIsAuthenticated(true);
+        setUsername(response.data.user.username);
+        setLocalUsername("");
         setEmail("");
         setPassword("");
         navigate("/");
       }
     } catch (err) {
-      setError("Registration failed. Please try again.");
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     }
   };
 
@@ -38,7 +46,7 @@ const Register = () => {
           type="text"
           placeholder="Username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => setLocalUsername(e.target.value)}
           required
         />
         <input

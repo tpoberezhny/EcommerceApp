@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const db = require("../db/index");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
@@ -30,7 +31,15 @@ router.post(
         [username, email]
       );
       if (userCheck.rows.length > 0) {
-        return res.status(400).json({ message: "User already exists" });
+        const existingUser = userCheck.rows[0];
+        if (existingUser.username === username) {
+          return res.status(400).json({ message: "Username is already taken" });
+        }
+        if (existingUser.email === email) {
+          return res
+            .status(400)
+            .json({ message: "Email is alredy registered" });
+        }
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -43,16 +52,24 @@ router.post(
 
       const user = result.rows[0];
 
-      req.login(user, (err) => {
+      req.login(user, { session: false }, (err) => {
         if (err) {
           console.error(err);
           return res
             .status(500)
             .json({ message: "Login failed after registration" });
         }
+
+        const token = jwt.sign(
+          { id: user.id, username: user.username },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+
         res.status(201).json({
           success: true,
           message: "User registered successfully and logged in",
+          token,
           user: result.rows[0],
         });
       });
