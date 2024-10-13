@@ -23,8 +23,9 @@ const ProductDetail = ({ addToCart }) => {
   return (
     product && (
       <div className="product-details">
-        <img src={product.image} alt={product.name} />
+        <img src={product.image_url} alt={product.name} />
         <h2>{product.name}</h2>
+        <p className="product-price">${product.price}</p>
         <p>{product.description}</p>
         <button onClick={() => addToCart(product.id)}>Add to Cart</button>
       </div>
