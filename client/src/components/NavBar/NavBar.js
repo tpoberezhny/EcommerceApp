@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./NavBar.scss";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ const Navbar = ({
   username,
   setIsAuthenticated,
   setUsername,
-  cart
+  cart,
 }) => {
   const navigate = useNavigate();
 
