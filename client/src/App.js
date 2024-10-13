@@ -28,22 +28,27 @@ const App = () => {
       setUsername(storedUsername);
     }
 
-    const fetchCartItems = async () => {
-      if (!token) return;
-
-      const decodedToken = jwtDecode(token);
-      const user_id =decodedToken.id;
-
-      try {
-        const response = await axios.get(`/shopping_cart/${user_id}`);
-        setCart(response.data || []);
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      }
-    };
-
     fetchCartItems();
   }, []);
+
+  const fetchCartItems = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    const decodedToken = jwtDecode(token);
+    const user_id = decodedToken.id;
+
+    try {
+      const response = await axios.get(`/shopping_cart/${user_id}`);
+      const cartItemsWithUserId = response.data.map((item) => ({
+        ...item,
+        user_id,
+      }));
+      setCart(cartItemsWithUserId || []);
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    }
+  };
 
   const addToCart = async (productId) => {
     const token = localStorage.getItem("authToken");
@@ -76,7 +81,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<ProductList />} />
-        <Route path="/shopping_cart" element={<Cart cart={cart}/>} />
+        <Route path="/shopping_cart" element={<Cart cart={cart} setCart={setCart} fetchCartItems={fetchCartItems}/>} />
         <Route
           path="/register"
           element={

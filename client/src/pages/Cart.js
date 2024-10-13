@@ -3,7 +3,7 @@ import axios from "../api/axios";
 import { jwtDecode } from "jwt-decode";
 import "../styles/Cart.scss";
 
-const Cart = ({ cart = [], setCart }) => {
+const Cart = ({ cart = [], setCart, fetchCartItems }) => {
   const [showCurrentOrder, setShowCurrentOrder] = useState(true);
   const [orderHistory, setOrderHistory] = useState([]);
 
@@ -30,6 +30,65 @@ const Cart = ({ cart = [], setCart }) => {
     fetchOrderHistory();
   }, []);
 
+  const increaseQuantity = async (item) => {
+    const { user_id, id: product_id, quantity } = item;
+
+    if (!user_id || !product_id) {
+      console.error("User ID or Product ID is missing.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        `/shopping_cart/${user_id}/${product_id}`,
+        { quantity: quantity + 1 }
+      );
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error increasing item quantity", error);
+    }
+  };
+
+  const decreaseQuantity = async (item) => {
+    const { user_id, id: product_id, quantity } = item;
+
+    if (!user_id || !product_id) {
+      console.error("User ID or Product ID is missing.");
+      return;
+    }
+
+    if (quantity > 1) {
+      try {
+        await axios.put(
+          `/shopping_cart/${user_id}/${product_id}`,
+          { quantity: quantity - 1 }
+        );
+        fetchCartItems();
+      } catch (error) {
+        console.error("Error decreasing item quantity", error);
+      }
+    } else {
+      removeFromCart(item);
+    }
+  };
+
+  //Need to fix
+  const removeFromCart = async (item) => {
+    const { user_id, id: product_id } = item;
+
+    if (!user_id || !product_id) {
+      console.error("User ID or Product ID is missing.");
+      return;
+    }
+
+    try {
+      await axios.delete(`/shopping_cart/${user_id}/${product_id}`);
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error removing item from cart", error);
+    }
+  };
+
   return (
     <div className="cart-page">
       <div className="cart-buttons">
@@ -42,10 +101,27 @@ const Cart = ({ cart = [], setCart }) => {
       {showCurrentOrder ? (
         <div className="cart-items">
           {cart.map((item) => (
-            <div key={item.id} className="cart-item">
-              <p>{item.name}</p>
-              <p>Quantity: {item.quantity}</p>
-              <p>Price: ${item.price}</p>
+            <div key={item.product_id} className="cart-item">
+              <img
+                src={item.image_url}
+                alt={item.name}
+                className="cart-item-image"
+              />
+              <div className="cart-item-details">
+                <p>{item.name}</p>
+                <p>Price: ${item.price}</p>
+                <div className="quantity-controls">
+                  <button onClick={() => decreaseQuantity(item)}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => increaseQuantity(item)}>+</button>
+                </div>
+                <button
+                  onClick={() => removeFromCart(item)}
+                  className="remove-button"
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           ))}
           <div className="total-price">
