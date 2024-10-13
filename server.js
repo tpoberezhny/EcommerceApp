@@ -34,7 +34,7 @@ const userRoute = require("./routes/user");
 app.use(userRoute);
 
 const cartRoute = require("./routes/cart");
-app.use(cartRoute);
+app.use("/shopping_cart", cartRoute);
 
 const orderRoute = require("./routes/orders");
 app.use(orderRoute);
