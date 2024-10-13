@@ -3,7 +3,7 @@ const db = require("../db/index");
 const router = express.Router();
 
 // POST /shopping_cart - Add a product to users shopping cart
-router.post("/shopping_cart", async (req, res) => {
+router.post("/", async (req, res) => {
   const { user_id, product_id, quantity } = req.body;
 
   try {
@@ -35,7 +35,7 @@ router.post("/shopping_cart", async (req, res) => {
 });
 
 // GET /shopping_cart/{user_id} - Retrieve the shopping cart for the user
-router.get("/shopping_cart/:user_id", async (req, res) => {
+router.get("/:user_id", async (req, res) => {
   const { user_id } = req.params;
 
   try {
@@ -57,7 +57,7 @@ router.get("/shopping_cart/:user_id", async (req, res) => {
 });
 
 //PUT /shopping_cart/{user_id}/{product_id} - Update quantity of a product in the cart
-router.put("/shopping_cart/:user_id/:product_id", async (req, res) => {
+router.put("/:user_id/:product_id", async (req, res) => {
   const { user_id, product_id } = req.params;
   const { quantity } = req.body;
 
@@ -78,7 +78,7 @@ router.put("/shopping_cart/:user_id/:product_id", async (req, res) => {
 });
 
 //DE:ETE /shopping_cart/{user_id}/{product_id} - Remove product from the cart
-router.delete("/shopping_cart/:user_id/:product_id", async (req, res) => {
+router.delete("/:user_id/:product_id", async (req, res) => {
   const { user_id, product_id } = req.params;
 
   try {
@@ -100,7 +100,7 @@ router.delete("/shopping_cart/:user_id/:product_id", async (req, res) => {
 //CHECKOUT
 
 //POST /shopping_cart/checkout - Checkout the cart
-router.post("/shopping_cart/checkout", async (req, res) => {
+router.post("/checkout", async (req, res) => {
   const { user_id, payment_method } = req.body;
 
   try {

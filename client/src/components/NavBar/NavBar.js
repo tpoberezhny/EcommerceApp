@@ -39,7 +39,7 @@ const Navbar = ({
           <img src={productIcon} alt="Product" className="navBar-icon" />
           Products
         </Link>
-        <Link to="/cart">
+        <Link to="/shopping_cart">
           <img src={cartIcon} alt="Cart" className="navBar-icon" />
           Cart ({cart.length})
         </Link>
