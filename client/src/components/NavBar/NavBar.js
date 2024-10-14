@@ -18,7 +18,10 @@ const Navbar = ({
 }) => {
   const navigate = useNavigate();
 
-  const totalItemsInCart = cart.reduce((total, item) => total + item.quantity, 0)
+  const totalItemsInCart = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
