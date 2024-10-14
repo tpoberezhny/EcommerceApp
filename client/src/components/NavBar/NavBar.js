@@ -14,14 +14,18 @@ const Navbar = ({
   setIsAuthenticated,
   setUsername,
   cart,
+  setCart,
 }) => {
   const navigate = useNavigate();
+
+  const totalItemsInCart = cart.reduce((total, item) => total + item.quantity, 0)
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("username");
     setIsAuthenticated(false);
     setUsername("");
+    setCart([]);
     navigate("/");
   };
 
@@ -41,7 +45,7 @@ const Navbar = ({
         </Link>
         <Link to="/shopping_cart">
           <img src={cartIcon} alt="Cart" className="navBar-icon" />
-          Cart ({cart.length})
+          Cart ({totalItemsInCart})
         </Link>
       </div>
       <div className="navBar-auth">
