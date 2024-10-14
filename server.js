@@ -37,7 +37,7 @@ const cartRoute = require("./routes/cart");
 app.use("/shopping_cart", cartRoute);
 
 const orderRoute = require("./routes/orders");
-app.use(orderRoute);
+app.use("/orders", orderRoute);
 
 app.listen(port, () => {
   console.log(`Server is running on PORT:${port}`);
