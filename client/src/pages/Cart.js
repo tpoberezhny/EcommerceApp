@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import { jwtDecode } from "jwt-decode";
 import "../styles/Cart.scss";
@@ -6,6 +7,7 @@ import "../styles/Cart.scss";
 const Cart = ({ cart = [], setCart, fetchCartItems }) => {
   const [showCurrentOrder, setShowCurrentOrder] = useState(true);
   const [orderHistory, setOrderHistory] = useState([]);
+  const navigate = useNavigate();
 
   const totalPrice = cart.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -27,8 +29,8 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
         console.error("Error fetching order history", error);
       }
     };
-    fetchOrderHistory();
-  }, []);
+    if (!showCurrentOrder) fetchOrderHistory();
+  }, [showCurrentOrder]);
 
   const increaseQuantity = async (item) => {
     const { user_id, id: product_id, quantity } = item;
@@ -91,6 +93,10 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
     }
   };
 
+  const handleCheckout = () => {
+    navigate("/checkout");
+  }
+
   return (
     <div className="cart-page">
       <div className="cart-buttons">
@@ -129,7 +135,9 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
           <div className="total-price">
             <p>Total: ${totalPrice}</p>
           </div>
-          <button className="checkout-button">Checkout</button>
+          <button onClick={handleCheckout} className="checkout-button">
+            Checkout
+          </button>
         </div>
       ) : (
         <div className="order-history">
@@ -138,6 +146,16 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
               <p>Order #{order.id}</p>
               <p>Total: ${order.total_price}</p>
               <p>Date: {new Date(order.created_at).toLocaleDateString()}</p>
+              <div>
+                <h4>Items: </h4>
+                <ul>
+                  {order.items.map((item) => (
+                    <li key={item.product_id}>
+                      {item.name} - ${item.price} x {item.quantity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>

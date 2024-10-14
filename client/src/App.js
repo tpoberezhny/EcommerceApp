@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
 //components
 import Navbar from "./components/NavBar/NavBar";
@@ -14,6 +16,8 @@ import Checkout from "./pages/Checkout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import axios from "./api/axios";
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -107,43 +111,55 @@ const App = () => {
         setUsername={setUsername}
         setCart={setCart}
       />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<ProductList />} />
-        <Route
-          path="/shopping_cart"
-          element={
-            <Cart
-              cart={cart}
-              setCart={setCart}
-              fetchCartItems={fetchCartItems}
-            />
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <Register
-              setIsAuthenticated={setIsAuthenticated}
-              setUsername={setUsername}
-            />
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <Login
-              setIsAuthenticated={setIsAuthenticated}
-              setUsername={setUsername}
-            />
-          }
-        />
-        <Route
-          path="/products/:productId"
-          element={<ProductDetail addToCart={addToCart} />}
-        />
-        <Route exact path="/checkout" element={<Checkout />} />
-      </Routes>
+      <Elements stripe={stripePromise}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<ProductList />} />
+          <Route
+            path="/shopping_cart"
+            element={
+              <Cart
+                cart={cart}
+                setCart={setCart}
+                fetchCartItems={fetchCartItems}
+              />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <Register
+                setIsAuthenticated={setIsAuthenticated}
+                setUsername={setUsername}
+              />
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <Login
+                setIsAuthenticated={setIsAuthenticated}
+                setUsername={setUsername}
+              />
+            }
+          />
+          <Route
+            path="/products/:productId"
+            element={<ProductDetail addToCart={addToCart} />}
+          />
+          <Route
+            exact
+            path="/checkout"
+            element={
+              <Checkout
+                cart={cart}
+                fetchCartItems={fetchCartItems}
+                setCart={setCart}
+              />
+            }
+          />
+        </Routes>
+      </Elements>
     </Router>
   );
 };

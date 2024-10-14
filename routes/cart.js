@@ -1,6 +1,8 @@
 const express = require("express");
 const db = require("../db/index");
 const router = express.Router();
+const Stripe = require("stripe");
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 // POST /shopping_cart - Add a product to users shopping cart
 router.post("/", async (req, res) => {
@@ -97,14 +99,41 @@ router.delete("/:user_id/:product_id", async (req, res) => {
   }
 });
 
-//CHECKOUT
+// POST /shopping_cart/create-payment-intent - Create a Payment Intent
+router.post("/create-payment-intent", async (req, res) => {
+  const { user_id, amount } = req.body;
 
-//POST /shopping_cart/checkout - Checkout the cart
-router.post("/checkout", async (req, res) => {
-  const { user_id, payment_method } = req.body;
+  if (!amount || amount <= 0) {
+    console.error("Invalid amount provided:", amount);
+    return res.status(400).json({
+      error: "Amount must be greater than zero for the transaction to proceed",
+    });
+  }
 
   try {
-    //Validation that the cart exists and is not empty
+    console.log(
+      "Creating Payment Intent for Amount:",
+      Math.round(amount * 100)
+    ); // Log Amount
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency: "usd",
+    });
+
+    console.log("Payment Intent Amount (in cents):", Math.round(amount * 100));
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error("Error creating Payment Intent:", error);
+    res.status(500).json({ error: "Payment Intent creation failed" });
+  }
+});
+
+// POST /shopping_cart/checkout - Finalize Order after Payment
+router.post("/checkout", async (req, res) => {
+  const { user_id } = req.body;
+
+  try {
     const cartItems = await db.query(
       `SELECT products.id, products.price, shopping_cart.quantity
        FROM shopping_cart
@@ -115,30 +144,25 @@ router.post("/checkout", async (req, res) => {
     if (cartItems.rows.length === 0) {
       return res.status(404).send("Cart is empty or does not exist");
     }
-    //Calculating total price
+
     const totalPrice = cartItems.rows.reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
 
-    //SKIPING FOR NOW REAL PAYMENT PROCCEDURE
-
-    //Create a new order
     const orderResult = await db.query(
       "INSERT INTO orders (user_id, total_price, status, created_at, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *",
-      [user_id, totalPrice, "pending"]
+      [user_id, totalPrice, "completed"]
     );
+
     const orderId = orderResult.rows[0].id;
 
-    //Inserting all cart items into the 'order_items' table
     for (let item of cartItems.rows) {
-      const { id: productId, price, quantity } = item;
       await db.query(
         "INSERT INTO order_items (order_id, product_id, quantity, price, created_at, updated_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
-        [orderId, productId, quantity, price]
+        [orderId, item.id, item.quantity, item.price]
       );
     }
-    //Clearing users cart after checkout
     await db.query("DELETE FROM shopping_cart WHERE user_id = $1", [user_id]);
 
     res.status(201).json({
@@ -146,8 +170,8 @@ router.post("/checkout", async (req, res) => {
       orderId: orderId,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Sercer Error");
+    console.error("Error during checkout:", err);
+    res.status(500).send("Server Error");
   }
 });
 
