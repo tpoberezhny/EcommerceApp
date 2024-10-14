@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/axios";
-import { jwtDecode } from "jwt-decode";
 import "../styles/ProductDetail.scss";
 
 const ProductDetail = ({ addToCart }) => {
@@ -21,22 +20,8 @@ const ProductDetail = ({ addToCart }) => {
     fetchProductDetails();
   }, [productId]);
 
-  const handleAddToCart = async () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return;
-
-    const decodedToken = jwtDecode(token);
-    const user_id = decodedToken.id;
-
-    try {
-       await axios.post("/shopping_cart", {
-        user_id,
-        product_id: productId,
-        quantity: 1,
-      });
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-    }
+  const handleAddToCart = () => {
+    addToCart(productId);
   };
 
   return (

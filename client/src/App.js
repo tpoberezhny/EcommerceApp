@@ -26,14 +26,16 @@ const App = () => {
     if (token && storedUsername) {
       setIsAuthenticated(true);
       setUsername(storedUsername);
+      fetchCartItems();
     }
-
-    fetchCartItems();
   }, []);
 
   const fetchCartItems = async () => {
     const token = localStorage.getItem("authToken");
-    if (!token) return;
+    if (!token) {
+      setCart([]);
+      return;
+    }
 
     const decodedToken = jwtDecode(token);
     const user_id = decodedToken.id;
@@ -63,11 +65,37 @@ const App = () => {
         product_id: productId,
         quantity: 1,
       });
-      setCart((prevCart) => [...prevCart, response.data]);
+
+      setCart((prevCart) => {
+        const existingItem = prevCart.find(
+          (item) => item.id === response.data.product_id
+        );
+        if (existingItem) {
+          // Increase quantity if item exists
+          return prevCart.map((item) =>
+            item.id === response.data.product_id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          );
+        } else {
+          // Add new item to cart
+          return [...prevCart, { ...response.data, quantity: 1 }];
+        }
+      });
+
+      setTimeout(() => {
+        fetchCartItems();
+      }, 100);
     } catch (error) {
       console.error("Error adding product to the cart", error);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCartItems();
+    }
+  }, [isAuthenticated]);
 
   return (
     <Router>
@@ -77,11 +105,21 @@ const App = () => {
         cart={cart}
         setIsAuthenticated={setIsAuthenticated}
         setUsername={setUsername}
+        setCart={setCart}
       />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<ProductList />} />
-        <Route path="/shopping_cart" element={<Cart cart={cart} setCart={setCart} fetchCartItems={fetchCartItems}/>} />
+        <Route
+          path="/shopping_cart"
+          element={
+            <Cart
+              cart={cart}
+              setCart={setCart}
+              fetchCartItems={fetchCartItems}
+            />
+          }
+        />
         <Route
           path="/register"
           element={

@@ -39,10 +39,9 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
     }
 
     try {
-      await axios.put(
-        `/shopping_cart/${user_id}/${product_id}`,
-        { quantity: quantity + 1 }
-      );
+      await axios.put(`/shopping_cart/${user_id}/${product_id}`, {
+        quantity: quantity + 1,
+      });
       fetchCartItems();
     } catch (error) {
       console.error("Error increasing item quantity", error);
@@ -59,10 +58,9 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
 
     if (quantity > 1) {
       try {
-        await axios.put(
-          `/shopping_cart/${user_id}/${product_id}`,
-          { quantity: quantity - 1 }
-        );
+        await axios.put(`/shopping_cart/${user_id}/${product_id}`, {
+          quantity: quantity - 1,
+        });
         fetchCartItems();
       } catch (error) {
         console.error("Error decreasing item quantity", error);
@@ -72,7 +70,6 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
     }
   };
 
-  //Need to fix
   const removeFromCart = async (item) => {
     const { user_id, id: product_id } = item;
 
@@ -83,7 +80,12 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
 
     try {
       await axios.delete(`/shopping_cart/${user_id}/${product_id}`);
-      fetchCartItems();
+
+      setCart((prevCart) =>
+        prevCart.filter((cartItem) => cartItem.id !== product_id)
+      );
+
+      await fetchCartItems();
     } catch (error) {
       console.error("Error removing item from cart", error);
     }
