@@ -110,17 +110,11 @@ router.post("/create-payment-intent", async (req, res) => {
     });
   }
 
-  try {
-    console.log(
-      "Creating Payment Intent for Amount:",
-      Math.round(amount * 100)
-    ); // Log Amount
+  try { 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
     });
-
-    console.log("Payment Intent Amount (in cents):", Math.round(amount * 100));
 
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
