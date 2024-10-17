@@ -60,6 +60,11 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
       >
         Log in with Google
       </button>
+      <div className="logIn-info">
+        <h3>For successfull test of log in, use these credentials:</h3>
+        <h4>Username: test</h4>
+        <h4>Password: 123456</h4>
+      </div>
     </div>
   );
 };
