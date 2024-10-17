@@ -11,14 +11,10 @@ const Checkout = ({ cart = [], fetchCartItems, setCart }) => {
   const [success, setSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  console.log("Cart:", cart);
-
   const totalAmount =
     cart && cart.length > 0
       ? cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
       : 0;
-
-  console.log("Total Amount:", totalAmount);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,9 +28,6 @@ const Checkout = ({ cart = [], fetchCartItems, setCart }) => {
     try {
       const decodedToken = jwtDecode(token);
       const user_id = decodedToken.id;
-
-      console.log("Total Amount being sent to backend:", totalAmount); // Add logging
-
       // Request the Payment Intent from backend
       const {
         data: { clientSecret },
@@ -68,21 +61,30 @@ const Checkout = ({ cart = [], fetchCartItems, setCart }) => {
   };
 
   return (
-    <div className="checkout">
-      <h2>Checkout</h2>
-      <form onSubmit={handleSubmit}>
-        <CardElement />
-        <button type="submit" disabled={!stripe || isProcessing}>
-          {isProcessing ? "Processing..." : "Pay"}
-        </button>
-      </form>
-      {error && <p className="error">{error}</p>}
-      {success && (
-        <p className="success">
-          Payment successful! Thank you for your purchase.
-        </p>
-      )}
-    </div>
+    <>
+      <div className="checkout">
+        <h2>Checkout</h2>
+        <form onSubmit={handleSubmit}>
+          <CardElement />
+          <button type="submit" disabled={!stripe || isProcessing}>
+            {isProcessing ? "Processing..." : "Pay"}
+          </button>
+        </form>
+        {error && <p className="error">{error}</p>}
+        {success && (
+          <p className="success">
+            Payment successful! Thank you for your purchase.
+          </p>
+        )}
+      </div>
+      <div className="card-info">
+        <h3>For succecfull payment test, use these numbers:</h3>
+        <h4>Card number: 4242 4242 4242 4242</h4>
+        <h4>MM / RR: 12/34</h4>
+        <h4>CVC: 123</h4>
+        <h4>PSČ: 15000</h4>
+      </div>
+    </>
   );
 };
 
