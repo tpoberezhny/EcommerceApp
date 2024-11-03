@@ -22,6 +22,10 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get("/", (req, res) => {
+  res.status(200).send("Server is up and running!");
+});
+
 const registerRoute = require("./routes/register");
 app.use(registerRoute);
 
