@@ -6,6 +6,7 @@ import "../styles/ProductDetail.scss";
 const ProductDetail = ({ addToCart }) => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
+  const [notification, setNotification] = useState("");
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -22,6 +23,10 @@ const ProductDetail = ({ addToCart }) => {
 
   const handleAddToCart = () => {
     addToCart(productId);
+    setNotification("Item added to cart!");
+    setTimeout(() => {
+      setNotification("");
+    }, 3000);
   };
 
   return (
@@ -32,6 +37,7 @@ const ProductDetail = ({ addToCart }) => {
         <p className="product-price">${product.price}</p>
         <p>{product.description}</p>
         <button onClick={handleAddToCart}>Add to Cart</button>
+        {notification && <div className="notification">{notification}</div>}
       </div>
     )
   );
