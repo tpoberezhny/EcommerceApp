@@ -7,7 +7,6 @@ import "../styles/Cart.scss";
 const Cart = ({ cart = [], setCart, fetchCartItems }) => {
   const [showCurrentOrder, setShowCurrentOrder] = useState(true);
   const [orderHistory, setOrderHistory] = useState([]);
-  const [notification, setNotification] = useState("");
   const navigate = useNavigate();
 
   const totalPrice = cart.reduce(
@@ -46,11 +45,6 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
         quantity: quantity + 1,
       });
       fetchCartItems();
-      setNotification(`Increased ${item.name} quantity in the cart`);
-
-      setTimeout(() => {
-        setNotification("");
-      }, 3000);
     } catch (error) {
       console.error("Error increasing item quantity", error);
     }
@@ -70,21 +64,11 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
           quantity: quantity - 1,
         });
         fetchCartItems();
-        setNotification(`Decreased ${item.name} quantity in the cart`);
-
-        setTimeout(() => {
-          setNotification("");
-        }, 3000);
       } catch (error) {
         console.error("Error decreasing item quantity", error);
       }
     } else {
       removeFromCart(item);
-      setNotification(`Removed ${item.name} from the cart`);
-
-      setTimeout(() => {
-        setNotification("");
-      }, 3000);
     }
   };
 
@@ -104,11 +88,6 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
       );
 
       await fetchCartItems();
-      setNotification(`Removed ${item.name} from the cart`);
-
-      setTimeout(() => {
-        setNotification("");
-      }, 3000);
     } catch (error) {
       console.error("Error removing item from cart", error);
     }
@@ -116,7 +95,7 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
 
   const handleCheckout = () => {
     navigate("/checkout");
-  };
+  }
 
   return (
     <div className="cart-page">
@@ -180,9 +159,6 @@ const Cart = ({ cart = [], setCart, fetchCartItems }) => {
             </div>
           ))}
         </div>
-      )}
-      {notification && (
-        <div className="notificationMessage">{notification}</div>
       )}
     </div>
   );
