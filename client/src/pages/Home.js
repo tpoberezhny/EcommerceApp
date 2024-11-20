@@ -16,11 +16,6 @@ const Home = () => {
       <Link to="/products" className="shopBtn">
         Shop
       </Link>
-      <h1 className="attention">
-        Currently stragling some problems with the db (Render free subscription
-        is expired)
-      </h1>
-      <p className="attention">Will be fixed until 20.11.24</p>
     </div>
   );
 };
