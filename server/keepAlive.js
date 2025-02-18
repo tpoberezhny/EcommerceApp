@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-// Ping backend every 1 minute
+// Ping backend every 2 minute
 setInterval(() => {
   axios
     .get(process.env.baseURL)
@@ -12,6 +12,6 @@ setInterval(() => {
       );
     })
     .catch((error) => console.log("Ping failed:", error.message));
-}, 30000);
+}, 120 * 1000);
 
 module.exports = {};
